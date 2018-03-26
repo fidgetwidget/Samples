@@ -17,7 +17,7 @@ html(lang="en")
       form(action="", method="POST")
 
         input(type="hidden", name="_csrf", value=csrfToken)
-        input(type="hidden", name="page_id", value="#{ page.id }")
+        input(type="hidden", name="page_id", value=page.id)
 
         .field
           h3.title.is4 #{ page.title }
