@@ -6,6 +6,7 @@ class Page extends Model {
   static boot () {
     super.boot()
     this.addHook('beforeCreate', 'Datestamp.createdAt')
+    this.addHook('beforeSave', 'Page.ensureName')
     this.addHook('beforeSave', 'Datestamp.updatedAt')
   }
 
