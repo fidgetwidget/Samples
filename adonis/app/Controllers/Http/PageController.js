@@ -9,7 +9,12 @@ class PageController {
   async form ({ params, view, response }) {
     let page
     if (params.id) {
-      page = await Page.find(params.id)
+      try {
+        page = await Page.findOrFail(params.id)  
+      } catch(e) {
+        console.error(e)
+        return response.status(404).send(e)
+      }
     } else {
       page = new Page()
     }
@@ -20,7 +25,12 @@ class PageController {
   async submit ({params, request, response, view }) {
     let page
     if (params.id) {
-      page = await Page.find(params.id)
+      try {
+        page = await Page.findOrFail(params.id)  
+      } catch(e) {
+        console.error(e)
+        return response.status(404).send(e)
+      }
     } else {
       page = new Page()
     }
@@ -30,6 +40,7 @@ class PageController {
     try {
       await validate(inputs, rules)
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
 
@@ -38,6 +49,7 @@ class PageController {
     try {
       await page.save()
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
     
@@ -68,6 +80,7 @@ class PageController {
     try {
       await validate(inputs, rules)
     } catch(e) {
+      console.error(e)
       response.send(e)
     }
     
@@ -75,6 +88,7 @@ class PageController {
     try {
       page = await Page.create(inputs)
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
 
@@ -105,6 +119,7 @@ class PageController {
     try {
       await validate(inputs, rules)
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
 
@@ -113,6 +128,7 @@ class PageController {
     try {
       await page.save()
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
 

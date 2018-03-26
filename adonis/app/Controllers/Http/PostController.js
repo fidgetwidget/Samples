@@ -10,13 +10,19 @@ class PostController {
   async form ({ params, view, response }) {
     let page, post
     try {
-      page = await Page.find(params.page_id)
+      page = await Page.findOrFail(params.page_id)
     } catch(e) {
-      return response.redirect('/')
+      console.error(e)
+      return response.status(404).send(e)
     }
 
     if (params.id) {
-      post = await Post.find(params.id)
+      try {
+        post = await Post.findOrFail(params.id)
+      } catch(e) {
+        console.error(e)
+        return response.status(404).send(e)
+      }
     } else {
       post = new Post()
       post.page_id = page.id
@@ -28,13 +34,19 @@ class PostController {
   async submit ({params, request, response, view }) {
     let page, post
     try {
-      page = await Page.find(params.page_id)
+      page = await Page.findOrFail(params.page_id)
     } catch(e) {
-      return response.redirect('/')
+      console.error(e)
+      return response.status(404).send(e)
     }
 
     if (params.id) {
-      post = await Post.find(params.id)
+      try {
+        post = await Post.findOrFail(params.id)
+      } catch(e) {
+        console.error(e)
+        return response.status(404).send(e)
+      }
     } else {
       post = new Post()
     }
@@ -48,6 +60,7 @@ class PostController {
     try {
       await validate(inputs, rules)
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
 
@@ -56,6 +69,7 @@ class PostController {
     try {
       await post.save()
     } catch(e) {
+      console.error(e)
       return response.send(e)
     }
     
