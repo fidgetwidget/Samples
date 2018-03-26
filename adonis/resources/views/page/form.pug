@@ -1,0 +1,62 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    title Page
+
+    != css('https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css')
+
+    style(type="text/css").
+      .form-container {
+        margin-top: 2rem;
+        margin-bottom: 2rem
+      }
+  body
+
+    include ../partials/notifications
+    
+    .container.form-container
+
+      h1.title #{ page.id ? 'Edit Page '+page.id : 'Create Page' }
+
+      form(action="", method="POST")
+
+        input(type="hidden", name="_csrf", value=csrfToken)
+
+        //- Edit Only
+        if (page.id)
+          input(type="hidden", name="id", value=page.id)
+
+          .field.columns
+            .column
+              label.label Created At
+              span(title="created_at date") #{ page.created_at }
+            
+            .column
+              label.label Last Updated At
+              span(title="updated_at date") #{ page.updated_at }
+        //- END OF "Edit Only"
+
+        .field
+          lable.lable(for="name") Name
+          .control
+            input.input(type="text", name="name", value=page.name)
+
+        .field
+          lable.lable(for="title") Title
+          .control
+            input.input(type="text", name="title", value=page.title)
+
+        .field
+          lable.lable(for="subtitle") Subtitle
+          .control
+            input.input(type="text", name="subtitle", value=page.subtitle)
+
+        .field
+          lable.lable(for="content") Content
+          .control
+            textarea.textarea(name="content") #{ page.content }
+
+        .field
+          button.button(type="submit") #{ page.id ? 'Save' : 'Create' }
+

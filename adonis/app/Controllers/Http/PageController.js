@@ -1,0 +1,134 @@
+'use strict'
+
+const Page = use('App/Models/Page')
+
+const { validate } = use('indicative')
+
+class PageController {
+
+  async form ({ params, view, response }) {
+    let page
+    if (params.id) {
+      page = await Page.find(params.id)
+    } else {
+      page = new Page()
+    }
+
+    return view.render('page.form', { page })
+  }
+
+  async submit ({params, request, response, view }) {
+    let page
+    if (params.id) {
+      page = await Page.find(params.id)
+    } else {
+      page = new Page()
+    }
+
+    const rules = {} // TODO: add validation
+    const inputs = request.only(['name', 'title', 'subtitle', 'content'])
+    try {
+      await validate(inputs, rules)
+    } catch(e) {
+      return response.send(e)
+    }
+
+    page.merge(inputs)
+
+    try {
+      await page.save()
+    } catch(e) {
+      return response.send(e)
+    }
+    
+    return view.render('page.form', { 
+      page, 
+      notification: {
+        success: true,
+        message: "Save Success!"
+      } 
+    })
+  }
+
+
+  async index () {
+    const pages = await Page.all()
+    return pages.toJSON()
+  }
+
+  async store ({ request, response }) {
+
+    const rules = {
+      name: 'required',
+      // title: '',
+      // subtitle: '',
+      // content: '',
+    }
+    const inputs = request.only(['name', 'title', 'subtitle', 'content'])
+    try {
+      await validate(inputs, rules)
+    } catch(e) {
+      response.send(e)
+    }
+    
+    let page
+    try {
+      page = await Page.create(inputs)
+    } catch(e) {
+      return response.send(e)
+    }
+
+    return response.send({success: true, id: page.id})
+  }
+
+  async show ({ params, response }) {
+    const { name } = params
+    const page = await Page.query().where('name', name).first()
+    
+    if (!page) {
+      return response.send({ message: 'Page Not Found'})
+    }
+
+    return response.send(page.toJSON())
+  }
+
+  async update ({ params, request, response }) {
+    const { id } = params
+    const page = await Page.find(id)
+
+    if (!page) {
+      return response.send({ message: 'Page Not Found'})
+    }
+
+    const rules = {} // TODO: add validation
+    const inputs = request.only(['name', 'title', 'subtitle', 'content'])
+    try {
+      await validate(inputs, rules)
+    } catch(e) {
+      return response.send(e)
+    }
+
+    page.merge(inputs)
+
+    try {
+      await page.save()
+    } catch(e) {
+      return response.send(e)
+    }
+
+    return response.send({ success: true, page: page.toJSON()})
+  }
+
+  async destroy ({ params, response }) {
+    const { id } = params
+    const page = await Page.find(id)
+
+    if (!page) {
+      return response.send({ message: 'Page Not Found'})
+    }
+
+    return response.send({ success: true })
+  }
+}
+
+module.exports = PageController

@@ -1,0 +1,6 @@
+
+if notification
+  - let notification_class = notification.error ? 'is-warning' : notification.success ? 'is-success' : ''
+  .notification(class=notification_class)
+    p= notification.message
+    

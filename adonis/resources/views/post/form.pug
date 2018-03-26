@@ -1,0 +1,52 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    title Post
+
+    != css('https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css')
+
+  body
+    
+    include ../partials/notifications
+
+    .container.form-container
+
+      h1.title #{ post.id ? 'Edit Post '+post.id : 'Create Post' }
+
+      form(action="", method="POST")
+
+        input(type="hidden", name="_csrf", value=csrfToken)
+        input(type="hidden", name="page_id", value="#{ page.id }")
+
+        .field
+          h3.title.is4 #{ page.title }
+          if (page.subtitle)
+            h4.subtitle.is-5 #{ page.subtitle }
+
+        //- Edit Only
+        if (post.id)
+          input(type="hidden", name="id", value="#{ post.id }")
+          .field.columns
+            .column
+              label.label Created At
+              span(title="created_at date") #{ post.created_at }
+            
+            .column
+              label.label Last Updated At
+              span(title="updated_at date") #{ post.updated_at }
+        //- END OF "Edit Only"
+
+        .field
+          lable.lable(for="title") Title
+          .control
+            input.input(type="text", name="title", value=post.title)
+
+        .field
+          lable.lable(for="content") Content
+          .control
+            textarea.textarea(name="content") #{ post.content }
+
+        .field
+          button.button(type="submit") #{ post.id ? 'Save' : 'Create' }
+

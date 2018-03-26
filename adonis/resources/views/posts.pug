@@ -1,0 +1,89 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    title Posts
+    
+    != css('https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css')
+
+    style(type="text/css").
+      .page-container {
+        margin: 2rem;
+      }
+      .card { 
+        margin-bottom: 2rem!important;
+      }
+      .card.placeholder {
+        opacity: 0.8;
+      }
+  body
+    #root
+
+    != script('https://unpkg.com/axios/dist/axios.min.js')
+    != script('https://unpkg.com/react@16/umd/react.production.min.js')
+    != script('https://unpkg.com/react-dom@16/umd/react-dom.production.min.js')
+
+    script.
+      const e = React.createElement
+      const placeholderPageData = { title: '████', content: '██████████' }
+      const placeholderPostData = [
+        {title: '████', content: '██████████', classes: 'placeholder'}
+      ]
+
+      //- Components
+      class Page extends React.Component{
+        render() {
+          return e('div', {class: `page-container ${this.props.withPosts ? 'page-with-posts' : ''}`}, [
+            e('h1', {class: 'title is-1'}, `${this.props.title}`),
+            this.props.children
+          ])
+        }
+      }
+
+      class Post extends React.Component{
+        render() {
+          return e('div', {class: `card ${this.props.classes}`}, 
+            e('div', {class: 'card-content'}, [
+              e('h3', {class: 'title'}, `${this.props.title}`),
+              e('p', null, `${this.props.content}`)
+            ]))
+        }
+      }
+
+      //- Render Helper
+      function render(pageData, postData) {
+        let posts = postData.map(data => e(Post, data, null))
+        const postElms = e('section', {class: 'posts'}, posts)
+        const pageElm = e(Page, {title: pageData.title, content: pageData.content, posts: true}, postElms)
+
+        ReactDOM.render(
+          pageElm,
+          document.getElementById('root')
+        );
+      }
+
+      //- Fetch Helper
+      async function fetchAndRender() {
+        let pageData = placeholderPageData
+        let postData = placeholderPostData
+
+        try {
+          const pageRes = await axios.get(`/api/v1/pages`)
+          if (pageRes.data && pageRes.data.length > 0) pageData = pageRes.data[0]
+        } catch(e) {
+          console.error('Failed to get Pages')
+        }
+
+        try {
+          const postRes = await axios.get(`/api/v1/pages/p1/posts`)
+          if (postRes.data && pageRes.data.length > 0) postData = postRes.data
+
+        } catch(e) {
+          console.error('Failed to get Posts')
+        }
+
+        render(pageData, postData)
+      }
+
+      //- Page Behaviour
+      fetchAndRender()
