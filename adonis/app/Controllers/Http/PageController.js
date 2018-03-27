@@ -3,6 +3,7 @@
 const Page = use('App/Models/Page')
 
 const { validate } = use('indicative')
+const validParams = ['name', 'title', 'subtitle', 'content']
 
 class PageController {
 
@@ -36,7 +37,7 @@ class PageController {
     }
 
     const rules = {} // TODO: add validation
-    const inputs = request.only(['name', 'title', 'subtitle', 'content'])
+    const inputs = request.only(validParams)
     try {
       await validate(inputs, rules)
     } catch(e) {
@@ -69,14 +70,10 @@ class PageController {
   }
 
   async store ({ request, response }) {
-
     const rules = {
-      name: 'required',
-      // title: '',
-      // subtitle: '',
-      // content: '',
+      // TODO: add validation
     }
-    const inputs = request.only(['name', 'title', 'subtitle', 'content'])
+    const inputs = request.only(validParams)
     try {
       await validate(inputs, rules)
     } catch(e) {
@@ -115,7 +112,7 @@ class PageController {
     }
 
     const rules = {} // TODO: add validation
-    const inputs = request.only(['name', 'title', 'subtitle', 'content'])
+    const inputs = request.only(validParams)
     try {
       await validate(inputs, rules)
     } catch(e) {
@@ -142,7 +139,11 @@ class PageController {
     if (!page) {
       return response.send({ message: 'Page Not Found'})
     }
+    if (await page.posts().getCount()) {
+      return response.send({ message: 'Page has Posts. Delete Posts before deleting Page.'})
+    }
 
+    await page.delete()
     return response.send({ success: true })
   }
 }

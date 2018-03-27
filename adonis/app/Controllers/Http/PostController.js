@@ -4,6 +4,7 @@ const Page = use('App/Models/Page')
 const Post = use('App/Models/Post')
 
 const { validate } = use('indicative')
+const validParams = ['page_id', 'slug', 'title', 'content']
 
 class PostController {
 
@@ -55,7 +56,7 @@ class PostController {
       page_id: 'required',
       user_id: 'required'
     }
-    const inputs = request.only(['page_id', 'title', 'content'])
+    const inputs = request.only(validParams)
     inputs.user_id = 1
     try {
       await validate(inputs, rules)
@@ -90,15 +91,81 @@ class PostController {
   }
 
   async store () {
+    const rules = {
+      page_id: 'required',
+      user_id: 'required',
+    }
+    const inputs = request.only(validParams)
+    inputs.user_id = 1 // NOTE: this shouldn't be a hard coded value
+    try {
+      await validate(inputs, rules)
+    } catch(e) {
+      console.error(e)
+      response.send(e)
+    }
+    
+    let post
+    try {
+      post = await Post.create(inputs)
+    } catch(e) {
+      console.error(e)
+      return response.send(e)
+    }
+
+    return response.send({success: true, id: post.id})
   }
 
   async show () {
+    const { slug } = params
+    const post = await Post.query().where('slug', slug).first()
+    
+    if (!post) {
+      return response.send({ message: 'Post Not Found'})
+    }
+
+    return response.send(post.toJSON())
   }
 
   async update () {
+    const { id } = params
+    const post = await Post.find(id)
+
+    if (!post) {
+      return response.send({ message: 'Page Not Found'})
+    }
+
+    const rules = {
+      // TODO: add validation
+    } 
+    const inputs = request.only(validParams)
+    try {
+      await validate(inputs, rules)
+    } catch(e) {
+      console.error(e)
+      return response.send(e)
+    }
+
+    post.merge(inputs)
+
+    try {
+      await post.save()
+    } catch(e) {
+      console.error(e)
+      return response.send(e)
+    }
+
+    return response.send({ success: true, post: post.toJSON()})
   }
 
-  async destroy () {
+  async destroy ({ params, response }) {
+    const { id } = params
+    const post = await Post.find(id)
+
+    if (!post) {
+      return response.send({ message: 'Post Not Found'})
+    }
+    await post.delete()
+    return response.send({ success: true })
   }
 }
 
