@@ -5,9 +5,8 @@ const Model = use('Model')
 class Post extends Model {
   static boot () {
     super.boot()
-    this.addHook('beforeCreate', 'Post.createSlug')
-    this.addHook('beforeCreate', 'Datestamp.createdAt')
-    this.addHook('beforeSave', 'Datestamp.updatedAt')
+    this.addTrait('Slugify', { target: 'title' })
+    this.addTrait('Datestamp')
   }
 
   page () {
