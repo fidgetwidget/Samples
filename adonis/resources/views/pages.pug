@@ -12,15 +12,17 @@ html(lang="en")
       }
   body
     #root
-      .page-container
+      .pages(v-for="page in pages")
 
-        h1.title.is-1 {{ title }}
+        .page-container
 
-        h3.subtitle(v-if="hasSubtitle") {{ subtitle }}
+          h1.title.is-1 {{ page.title }}
 
-        section.page-content
+          h3.subtitle(v-if="page.subtitle") {{ page.subtitle }}
 
-          p {{ content }}
+          section.page-content
+
+            p {{ page.content }}
 
     script(src='https://cdn.jsdelivr.net/npm/vue')
     != script('https://unpkg.com/axios/dist/axios.min.js')
@@ -30,37 +32,23 @@ html(lang="en")
       var app = new Vue({
         el: '#root',
         data: {
-          page: null
-        },
-        computed: {
-          title() {
-            return this.page && this.page.title ? this.page.title : ''
-          },
-          subtitle() {
-            return this.page && this.page.subtitle ? this.page.subtitle : ''
-          },
-          hasSubtitle() {
-            return this.subtitle !== ''
-          },
-          content() {
-            return this.page && this.page.content ? this.page.content : ''
-          },
+          pages: []
         },
         methods: {
           async fetch() {
             try {
               const res = await axios.get(`/api/v1/pages`)
               if (res.data && res.data.length > 0) {
-                return res.data[0]
+                return res.data
               }
             } catch(e) {
               console.error(e)
             }
-            return null
+            return []
           },
         },
         async created() {
           let pageData = await this.fetch()
-          this.page = pageData
+          this.pages = pageData
         },
       })
