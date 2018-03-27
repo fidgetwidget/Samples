@@ -11,5 +11,5 @@ tmp
 package-lock.json
 yarn.lock
 
-# The development sqlite file
-database/development.sqlite
+# The sqlite file
+database/*.sqlite
