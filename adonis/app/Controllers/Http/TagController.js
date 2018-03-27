@@ -2,12 +2,11 @@
 
 class TagController {
   async index () {
+
   }
 
-  async store () {
-  }
-
-  async destroy () {
+  async show () {
+    
   }
 }
 

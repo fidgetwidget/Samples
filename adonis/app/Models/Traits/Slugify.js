@@ -6,10 +6,12 @@ class Slugify {
   register (Model, customOptions = {}) {
     const defaultOptions = {
       field: 'slug',
+      
       // slugify a target field to generate the slug
       // if target is false, use tmp-timestamp
       ensureExists: true,
       target: 'name',
+      
       // check to ensure the slug is unique, 
       // and append a count of similar to the slug
       ensureUnique: true,

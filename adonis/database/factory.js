@@ -11,12 +11,29 @@
 |
 */
 
-// const Factory = use('Factory')
+const Factory = use('Factory')
 
-/**
-  Factory.blueprint('App/Models/User', (faker) => {
-    return {
-      username: faker.username()
-    }
-  })
-*/
+Factory.blueprint('App/Models/User', (faker) => {
+  return {
+    username: faker.username(),
+    email: faker.email(),
+    password: 'password'
+  }
+})
+
+Factory.blueprint('App/Models/Page', (faker) => {
+  return {
+    name: faker.world(),
+    title: faker.sentence(),
+    subtitle: faker.sentence(),
+    content: faker.paragraph()
+  }
+})
+
+// Requires a user and page
+Factory.blueprint('App/Models/Post', (faker) => {
+  return {
+    title: faker.sentence(),
+    content: faker.paragraph()
+  }
+})
