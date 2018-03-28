@@ -7,9 +7,6 @@ html(lang="en")
     != css('https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css')
 
     style(type="text/css").
-      .page-container {
-        margin: 2rem;
-      }
       .card { 
         margin-bottom: 2rem!important;
       }
@@ -33,19 +30,21 @@ html(lang="en")
       //- Components
       class Page extends React.Component{
         render() {
-          return e('div', {class: `page-container ${this.props.withPosts ? 'page-with-posts' : ''}`}, [
-            e('h1', {class: 'title is-1'}, `${this.props.title}`),
-            this.props.children
+          return e('div', {class: `container page-container ${this.props.withPosts ? 'page-with-posts' : ''}`}, [
+            e('section', {class: 'section page'}, [
+              e('h1', {class: 'page-title title is-1'}, `${this.props.title}`),
+              this.props.children
+            ]),
           ])
         }
       }
 
       class Post extends React.Component{
         render() {
-          return e('div', {class: `card ${this.props.classes}`}, 
+          return e('div', {class: `post card ${this.props.classes}`}, 
             e('div', {class: 'card-content'}, [
-              e('h3', {class: 'title'}, `${this.props.title}`),
-              e('p', null, `${this.props.content}`)
+              e('h3', {class: 'post-title title'}, `${this.props.title}`),
+              e('p', {class: 'post-content'}, `${this.props.content}`)
             ]))
         }
       }
@@ -53,7 +52,7 @@ html(lang="en")
       //- Render Helper
       function render(pageData, postData) {
         let posts = postData.map(data => e(Post, data, null))
-        const postElms = e('section', {class: 'posts'}, posts)
+        const postElms = e('div', {class: 'posts'}, posts)
         const pageElm = e(Page, {title: pageData.title, content: pageData.content, posts: true}, postElms)
 
         ReactDOM.render(
@@ -77,7 +76,6 @@ html(lang="en")
         try {
           const postRes = await axios.get(`/api/v1/pages/p1/posts`)
           if (postRes.data && postRes.data.length > 0) postData = postRes.data
-
         } catch(e) {
           console.error('Failed to get Posts')
         }

@@ -7,14 +7,15 @@ html(lang="en")
     != css('https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css')
 
     style(type="text/css").
-      .page-container {
-        margin: 2rem;
+      .page-list .page:not(:last-child) {
+        border-bottom: 1px solid #ccc
       }
+
   body
     #root
-      .pages(v-for="page in pages")
+      .page-list.container
 
-        .page-container
+        section.page.section(v-for="page in pages")
 
           h1.title.is-1 {{ page.title }}
 
