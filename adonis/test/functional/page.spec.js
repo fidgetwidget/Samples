@@ -7,8 +7,9 @@ const Page = use('App/Models/Page')
 trait('Test/ApiClient')
 
 test('get list of pages', async ({ client }) => {
+  const uniqueName = `page-spec-${+Date.now()}`
   await Page.create({
-    name: 'example',
+    name: uniqueName,
     title: 'Example Post',
     subtitle: 'Subtitle Example',
     content: 'Page content'
@@ -18,7 +19,7 @@ test('get list of pages', async ({ client }) => {
 
   response.assertStatus(200)
   response.assertJSONSubset([{
-    name: 'example',
+    name: uniqueName,
     title: 'Example Post',
     subtitle: 'Subtitle Example',
     content: 'Page content'
