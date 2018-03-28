@@ -10,7 +10,7 @@ test('get list of pages', async ({ client }) => {
   const uniqueName = `page-spec-${+Date.now()}`
   await Page.create({
     name: uniqueName,
-    title: 'Example Post',
+    title: 'Example Page',
     subtitle: 'Subtitle Example',
     content: 'Page content'
   })
@@ -20,7 +20,7 @@ test('get list of pages', async ({ client }) => {
   response.assertStatus(200)
   response.assertJSONSubset([{
     name: uniqueName,
-    title: 'Example Post',
+    title: 'Example Page',
     subtitle: 'Subtitle Example',
     content: 'Page content'
   }])
