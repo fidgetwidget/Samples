@@ -137,13 +137,19 @@ class PageController {
     const page = await Page.find(id)
 
     if (!page) {
-      return response.send({ message: 'Page Not Found'})
+      return response.status(404).send({ success: false, message: 'Page Not Found'})
     }
     if (await page.posts().getCount()) {
-      return response.send({ message: 'Page has Posts. Delete Posts before deleting Page.'})
+      return response.status(412).send({ success: false, message: 'Page has Posts. Delete Posts before deleting Page.'})
     }
 
-    await page.delete()
+    try {
+      await page.delete()  
+    } catch (e) {
+      console.error(e)
+      return response.status(500).send({ success: false })
+    }
+    
     return response.send({ success: true })
   }
 }

@@ -32,7 +32,7 @@ class PostController {
     return view.render('post.form', { page, post })
   }
 
-  async submit ({params, request, response, view }) {
+  async submit ({ params, request, response, view }) {
     let page, post
     try {
       page = await Page.findOrFail(params.page_id)
@@ -90,7 +90,7 @@ class PostController {
     return posts.toJSON()
   }
 
-  async store () {
+  async store ({ request, response }) {
     const rules = {
       page_id: 'required',
       user_id: 'required',
@@ -115,18 +115,18 @@ class PostController {
     return response.send({success: true, id: post.id})
   }
 
-  async show () {
-    const { slug } = params
-    const post = await Post.query().where('slug', slug).first()
+  async show ({ params, response }) {
+    const { id } = params
+    const post = await Post.find(id)
     
     if (!post) {
-      return response.send({ message: 'Post Not Found'})
+      return response.status(404).send({ message: 'Post Not Found'})
     }
 
     return response.send(post.toJSON())
   }
 
-  async update () {
+  async update ({ params, response }) {
     const { id } = params
     const post = await Post.find(id)
 
@@ -154,7 +154,7 @@ class PostController {
       return response.send(e)
     }
 
-    return response.send({ success: true, post: post.toJSON()})
+    return response.send({ success: true, post: post.toJSON() })
   }
 
   async destroy ({ params, response }) {
@@ -162,9 +162,16 @@ class PostController {
     const post = await Post.find(id)
 
     if (!post) {
-      return response.send({ message: 'Post Not Found'})
+      return response.status(404).send({ success: false, message: 'Post Not Found' })
     }
-    await post.delete()
+
+    try {
+      await post.delete()
+    } catch (e) {
+      console.error(e)
+      return response.status(500).send({ success: false })
+    }
+    
     return response.send({ success: true })
   }
 }
