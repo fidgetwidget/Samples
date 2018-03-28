@@ -43,7 +43,7 @@ class Slugify {
         }
         const count = await query.getCount()
         if (count > 0) {
-          slug += `${count+1}`
+          slug += `-${count+1}`
         }
       }
 
