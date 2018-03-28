@@ -74,7 +74,7 @@ html(lang="en")
         }
 
         try {
-          const postRes = await axios.get(`/api/v1/pages/p1/posts`)
+          const postRes = await axios.get(`/api/v1/pages/${pageData.id}/posts`)
           if (postRes.data && postRes.data.length > 0) postData = postRes.data
         } catch(e) {
           console.error('Failed to get Posts')
