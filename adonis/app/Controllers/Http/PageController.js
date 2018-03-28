@@ -93,8 +93,8 @@ class PageController {
   }
 
   async show ({ params, response }) {
-    const { name } = params
-    const page = await Page.query().where('name', name).first()
+    const { id } = params
+    const page = await Page.find(id)
     
     if (!page) {
       return response.send({ message: 'Page Not Found'})
