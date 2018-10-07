@@ -13,17 +13,17 @@
 
 const Factory = use('Factory')
 
-Factory.blueprint('App/Models/User', (faker) => {
+Factory.blueprint('App/Models/User', (faker, i, data) => {
   return {
     username: faker.username(),
     email: faker.email(),
-    password: 'password'
+    password: data.password ? data.password : 'password'
   }
 })
 
-Factory.blueprint('App/Models/Page', (faker) => {
+Factory.blueprint('App/Models/Page', (faker, i, data) => {
   return {
-    name: faker.world(),
+    name: data.name ? data.name : faker.word(),
     title: faker.sentence(),
     subtitle: faker.sentence(),
     content: faker.paragraph()
@@ -31,9 +31,12 @@ Factory.blueprint('App/Models/Page', (faker) => {
 })
 
 // Requires a user and page
-Factory.blueprint('App/Models/Post', (faker) => {
+Factory.blueprint('App/Models/Post', (faker, i, data) => {
   return {
+    page_id: data.page_id,
+    user_id: data.user_id,
+    slug: data.slug ? data.slug : null,
     title: faker.sentence(),
-    content: faker.paragraph()
+    content: faker.paragraph(),
   }
 })

@@ -85,8 +85,19 @@ class PostController {
   }
 
 
-  async index () {
-    const posts = await Post.all()
+  async index ({ params, response }) {
+    let page
+    if (params.name) {
+      page = await Page.query().where('name', params.name).first()
+    } else if (params.pages_id) {
+      page = await Page.find(params.pages_id)
+    }
+
+    if (!page) {
+      return response.status(404).send({ message: 'Page Not Found'})
+    }
+
+    const posts = await page.posts().fetch()
     return posts.toJSON()
   }
 
@@ -116,9 +127,24 @@ class PostController {
   }
 
   async show ({ params, response }) {
-    const { id } = params
-    const post = await Post.find(id)
-    
+    let page, post
+
+    if (params.name) {
+      page = await Page.query().where('name', params.name).first()
+    } else if (params.page_id) {
+      page = await Page.find(params.page_id)
+    }
+
+    if (!page) {
+      return response.status(404).send({ message: 'Page Not Found'})
+    }
+
+    if (params.slug) {
+      post = await page.posts().where('slug', params.slug).first()
+    } else if (params.id) {
+      post = await page.posts().where('id', params.id).first()
+    }
+
     if (!post) {
       return response.status(404).send({ message: 'Post Not Found'})
     }

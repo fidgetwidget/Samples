@@ -14,8 +14,13 @@ const Config = use('Config')
 */
 
 Route.group(() => {
+  // name/slug shorthand routes : GET only
+  Route.get('p', 'PageController.index')
   Route.get('p/:name', 'PageController.show')
+  Route.get('p/:name/all', 'PostController.index')
   Route.get('p/:name/:slug', 'PostController.show')
+
+  // more standard rest-ish routes
   Route.resource('pages', 'PageController').apiOnly()
   Route.resource('pages.posts', 'PostController').apiOnly()
 
